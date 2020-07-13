@@ -6,29 +6,29 @@
 /*   By: mcho <zytls92@gmail.com>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/13 22:20:08 by mcho              #+#    #+#             */
-/*   Updated: 2020/07/13 23:01:10 by mcho             ###   ########.fr       */
+/*   Updated: 2020/07/14 05:07:14 by mcho             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <unistd.h>
 
-int			dupcheck(char ch, char *exist)
+int			dupcheck(char ch, char exist[])
 {
-	printf("dupcheck start!!\n");
 	int idx;
 
 	idx = 0;
 	while (*(exist + idx) != '\0')
 	{
-		if(ch == *(exist +idx))
+		if (ch == *(exist + idx))
 			return (0);
 		idx++;
 	}
 	return (1);
 }
+
 int			check(char *base)
 {
-	char	*exist;
+	char	exist[100];
 	int		idx;
 	char	ch;
 	int		dup;
@@ -38,32 +38,65 @@ int			check(char *base)
 	while (*(base + idx) != '\0')
 	{
 		ch = *(base + idx);
-		printf("ch is %c!! \n",ch);
 		if (ch == '+' || ch == '-')
-			return (dup);
+			return (0);
 		if (idx != 0)
 			dup = dupcheck(ch, exist);
 		if (dup < 1)
-			return (dup);
-		printf("why?? \n");
+			return (0);
 		exist[idx] = ch;
-		printf("not priniting!!\n");
 		idx++;
 	}
 	if (idx < 2)
-		return (dup);
-	return (dup);
+		return (0);
+	return (1);
 }
 
-int main()
+int			find_size(char *base)
 {
-	char base[10] = "abcda";
-	int res;
+	int		idx;
 
-	res = check(&base[0]);
+	idx = 0;
+	while (*(base + idx) != '\0')
+		idx++;
+	return (idx);
 }
 
-/*void		ft_putnbr_base(int nbr, char *base)
+void		ft_print(int nbr, char *base, int size)
 {
+	char	num[100];
+	int		idx;
+	int		pone;
 
-}*/
+	idx = 0;
+	while (nbr / size != 0)
+	{
+		pone = nbr % size;
+		if (nbr < 0)
+			pone *= -1;
+		num[idx++] = base[pone];
+		nbr /= size;
+	}
+	if (nbr < 0)
+		nbr *= -1;
+	num[idx] = base[nbr];
+	while (idx >= 0)
+		write(1, &num[idx--], 1);
+}
+
+void		ft_putnbr_base(int nbr, char *base)
+{
+	int		size;
+	char	mi;
+
+	mi = '-';
+	size = find_size(base);
+	if (check(base) == 0)
+		return ;
+	else
+	{
+		if (nbr < 0)
+			write(1, &mi, 1);
+		ft_print(nbr, base, size);
+	}
+}
